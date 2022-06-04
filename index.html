@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
+	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+	<title>myChart</title>
+</head>
+<body>
+	<label for="distribution">Choose a distribution:</label>
+	<select name="distribution" id="distribution">
+		<option value="exp">Exponential</option>
+		<option value="geo">Geometric  </option>
+		<option value="bin">Binomial   </option>
+		<option value="poi">Poisson    </option>
+	</select>
+	
+	<button type="submit" onclick="submit()"> Go </button>
+
+	<div id="graph"></div>
+
+	<!-- <div id="geoGraph"></div>
+	<div id="expGraph"></div>
+	<div id="binGraph"></div>
+	<div id="poiGraph"></div> -->
+
+	<script src="graphs.js"></script>
+</body>
+</html>
