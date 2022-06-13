@@ -9,15 +9,20 @@
 	<title>myChart</title>
 </head>
 <body>
-	<label for="distribution">Choose a distribution:</label>
-	<select name="distribution" id="distribution">
-		<option value="exp">Exponential</option>
-		<option value="geo">Geometric  </option>
-		<option value="bin">Binomial   </option>
-		<option value="poi">Poisson    </option>
-	</select>
-	
-	<button type="submit" onclick="submit()"> Go </button>
+	<form id = "info">
+		<label for="distribution">Choose a distribution:</label>
+		<select id="distribution" onchange="change()">
+			<option value="exp">Exponential</option>
+			<option value="geo">Geometric  </option>
+			<option value="bin">Binomial   </option>
+			<option value="poi">Poisson    </option>
+		</select><br><br>
+		<label for="p1" id="p1l">Enter the parameter:</label>
+		<input type="text" id="p1"><br><br>
+		<label for="p2" id="p2l">Enter the parameter:</label>
+		<input type="text" id="p2"><br><br>
+		<input type="button" value="Go" onclick="create()">
+	</form>
 
 	<div id="graph"></div>
 

@@ -1,28 +1,5 @@
-// // var trace1 = {
-// // 	x: [1, 2, 3, 4],
-// // 	y: [10, 15, 13, 17],
-// // 	mode: 'markers',
-// // 	type: 'scatter'
-// // };
-
-// // var trace2 = {
-// // 	x: [2, 3, 4, 5],
-// // 	y: [16, 5, 1, 9],
-// // 	mode: 'lines',
-// // 	type: 'scatter'
-// // };
-
-// // var trace3 = {
-// // 	x: [1, 2, 3, 4],
-// // 	y: [12, 9, 15, 12],
-// // 	mode: 'lines+markers',
-// // 	type: 'scatter'
-// // };
-
-// // var data = [trace1, trace2, trace3];
-
-// Plotly.newPlot('myChart', data)
-
+//GLOBAL VARIABLES
+var select = document.forms['info']['distribution'];
 
 //HELPER FUNCTIONS
 function binom(n, k, p = 0.5){
@@ -38,7 +15,7 @@ function geoGraph(p=0.5){
 	const x_axis = [], y_axis = [];
 	for(let i = 0; i <= N; i++) {
 		x_axis.push(i);
-		y_axis.push(p * Math.pow(1-p, i));
+		y_axis.push((1 - p) * Math.pow(p, i));
 	}
 
 	console.assert(x_axis.length == N+1, "incorrect size: " + x_axis.length);
@@ -76,7 +53,8 @@ function binGraph(n=6, p=0.5){
 		y_axis.push(binom(n, i, p));
 	}
 
-	console.assert(x_axis.length == n+1, "incorrect size: " + x_axis.length);
+	let m = n+1;
+	console.assert(x_axis.length == n+1, "Incorrect size: " + x_axis.length + " should be: " + m);
 
 	return {
 		x: x_axis, y: y_axis,
@@ -103,29 +81,87 @@ function poiGraph(l=2){
 	};
 }
 
-
-function submit(){
-	let select = document.getElementById('distribution');
+function create(){
+	console.log("Sucessful submission");
 	let choice = select.options[select.selectedIndex].value;
 
-	let graph;
+	let p1 = document.getElementById('p1').value;
+	let p2 = document.getElementById('p2').value;
+
+	if(p1 == '' || (choice == 'bin' && p2 == '')){
+		alert("Please enter the required parameters.");
+		return;
+	}
+
+	if(isNaN(p1) || isNaN(p2) || p1 < 0 || p2 < 0){
+		alert("Please enter only non-negative numbers as parameters.");
+		return;
+	}
+
+	if(choice == 'geo' || choice == 'bin'){
+		if(p1 > 1){
+			alert("Success probability must be below 1.");
+			return;
+		}
+	}
+
+	p1 = parseFloat(p1);
+	p2 = parseFloat(p2);
+
+	let graph = [];
 
 	switch(choice){
 		case 'geo':
-			graph = [geoGraph()];
+			graph.push(geoGraph(p1));
 			break;
 		case 'exp':
-			graph = [expGraph()];
+			graph.push(expGraph(p1));
 			break;
 		case 'bin':
-			graph = [binGraph()];
+			graph.push(binGraph(p2, p1));
 			break;
 		case 'poi':
-			graph = [poiGraph()];
+			graph.push(poiGraph(p1));
 			break;
 	}
 
 	Plotly.newPlot(canvas, graph);
+}
+
+function change(){
+	let choice = select.options[select.selectedIndex].value;
+
+	let p1l = document.getElementById('p1l');
+	let p2l = document.getElementById('p2l');
+	let p1 = document.getElementById('p1');
+	let p2 = document.getElementById('p2');
+
+	switch(choice){
+		case 'geo':
+		case 'bin':
+			p1l.innerHTML = "Success probability: ";
+			p1.value = 0.5;
+			break;
+		case 'exp':
+			p1l.innerHTML = "Rate parameter: ";
+			p1.value = 0.5;
+			break;
+		case 'poi':
+			p1l.innerHTML = "Average occurences: ";
+			p1.value = 2;
+			break;
+	}
+	
+	if(choice == 'bin'){
+		p2l.style.visibility = "";
+		p2.style.visibility = "";
+		p2l.innerHTML = "Number of trials: "
+		p2.value = 6;
+	}
+	else{
+		p2l.style.visibility = "hidden";
+		p2.style.visibility = "hidden";
+	}
 }
 
 // Plotly.newPlot('geoGraph', [geoGraph()]);
