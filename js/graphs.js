@@ -11,7 +11,6 @@ var disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
 var cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
 
 //Helper
-
 function beta(a, b){
 	return (math.gamma(a) * math.gamma(b)) / math.gamma(a+b);
 }
@@ -25,7 +24,7 @@ var Dist = new Map([
 	
 	['geo', function geometric_dist(k, p=0.5, p2=0){
 		if(k < 0) {return 0}
-		return (p * Math.pow(1-p, k));
+		return ((1-p) * Math.pow(p, k));
 	}],
 	
 	['und', function uniformd_dist(k, l=0, r=4){
@@ -119,6 +118,36 @@ var Rand = new Map([
 			x += Rand.get('exp')(b);
 		}
 		return x;
+	}],
+
+	['nor', function normal_rand(u=0, s=1){
+		let u1 = Math.random();
+		let u2 = Math.random();
+
+		return u + s*(Math.sqrt(-2*Math.log(u1)) * Math.sin(2*Math.PI*u2));
+	}],
+	
+	['stu', function students_t_rand(v=1){
+		let n = v + 1;
+		
+		let x = [];
+		for(let i = 0; i < n; i++){
+			x.push(Rand.get('nor')());
+		}
+
+		let mean = 0;
+		for(let i of x){
+			mean += i;
+		}
+		mean /= n;
+
+		let S = 0;
+		for(let i of x){
+			S += (i - mean)*(i - mean);
+		}
+		S /= (n-1);
+
+		return mean * Math.sqrt(n/S);
 	}]
 ]);
 
@@ -210,8 +239,7 @@ function randGraph(p1, p2, dist='und', dis='true'){
 	return {
 		x: x,
 		type: 'histogram',
-		histnorm: 'probability' + (dis? '' : ' density'),
-		xbins: {start: (dis? -0.5: 0)}
+		histnorm: 'probability' + (dis? '' : ' density')
 	}
 }
 
@@ -302,73 +330,63 @@ function change(){
 	let p1 = document.getElementById('p1');
 	let p2 = document.getElementById('p2');
 
+	p1l.hidden = false;
+	p1.hidden = false;
+
 	switch(choice){
 		case 'geo':
 		case 'bin':
 			p1l.innerHTML = "Success probability: ";
-			p1.value = 0.5;
 			break;
 		case 'exp':
 			p1l.innerHTML = "Rate parameter: ";
-			p1.value = 0.5;
 			break;
 		case 'poi':
 			p1l.innerHTML = "Average occurences: ";
-			p1.value = 2;
 			break;
 		case 'und':
 		case 'unc':
 			p1l.innerHTML = "Start: ";
-			p1.value = 0;
 			break;
 		case 'erl':
 		case 'gam':
 			p1l.innerHTML = "Shape parameter: ";
-			p1.value = 2;
 			break;
 		case 'bet':
 			p1l.innerHTML = "Alpha: ";
-			p1.value = 2;
 			break;
 		case 'stu':
 		case 'chi':
 			p1l.innerHTML = "Degrees of freedom: ";
-			p1.value = 2;
 			break;
 		case 'nor':
 			p1l.innerHTML = "Mean: ";
-			p1.value = 0;
 			break;
 	}
 
 	if(param2.includes(choice)){
-		p2l.style.visibility = "";
-		p2.style.visibility = "";
+		p2l.hidden = false;
+		p2.hidden = false;
 		
 		if(choice == 'bin'){
 			p2l.innerHTML = "Number of trials: ";
-			p2.value = 6;
 		}
 		else if(choice == 'und' || choice == 'unc'){
 			p2l.innerHTML = "End: ";
-			p2.value = 4;
 		}
 		else if(choice == 'gam' || choice == 'erl'){
 			p2l.innerHTML = "Rate parameter: ";
-			p2.value = 1;
 		}
 		else if(choice == 'bet'){
 			p2l.innerHTML = "Beta: ";
-			p2.value = 2;
 		}
 		else if(choice == 'nor'){
 			p2l.innerHTML = "Standard Dev.: ";
-			p2.value = 1;
 		}
 	}
 	else{
-		p2l.style.visibility = "hidden";
-		p2.style.visibility = "hidden";
+		p2l.hidden = true;
+		p2.hidden = true;
 	}
 	
 }
@@ -405,10 +423,3 @@ function CLT(){
 
 	Plotly.newPlot(canvas, graph);
 }
-
-// Plotly.newPlot('geoGraph', [geoGraph()]);
-// Plotly.newPlot('expGraph', [expGraph()]);
-// Plotly.newPlot('binGraph', [binGraph()]);
-// Plotly.newPlot('poiGraph', [poiGraph()]);
-// Plotly.newPlot('rbinGraph', [rbinGraph()]);
-// Plotly.newPlot('rexpGraph', [rexpGraph()]);
