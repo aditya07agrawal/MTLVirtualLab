@@ -6,9 +6,9 @@ var minp = 0.00001;		//Minimum probability shown
 var step = 0.001;		//Step of continous graphs
 var trials = 10000;		//Number of rands
 
-var param2 = ['bin', 'und', 'unc', 'gam', 'bet', 'nor', 'erl'];					//Graphs which require 2 parameters
-var disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
-var cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
+const param2 = ['bin', 'und', 'unc', 'gam', 'bet', 'nor', 'erl'];				//Graphs which require 2 parameters
+const disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
+const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
 
 //Helper
 function beta(a, b){
@@ -261,28 +261,21 @@ function normal(p1, p2, dist='und', cnt=100){
 }
 
 //MAIN FUNCTIONS
-function validate(){
-	let choice = select.options[select.selectedIndex].value;
-
+function validate(choice){
 	//Validation of inputed parameters
 	let p1 = document.getElementById('p1').value;
 	let p2 = document.getElementById('p2').value;
 
 	if(p1 == '' || (param2.includes(choice) && p2 == '')){
-		alert("Please enter the required parameters.");
-		return;
+		throw ("Please enter the required parameters.");
 	}
 
 	if(isNaN(p1) || isNaN(p2) || p1 < 0 || p2 < 0){
-		alert("Please enter only non-negative numbers as parameters.");
-		return;
+		throw ("Please enter only non-negative numbers as parameters.");
 	}
 
-	if(choice == 'geo' || choice == 'bin'){
-		if(p1 > 1){
-			alert("Success probability must be below 1.");
-			return;
-		}
+	if((choice == 'geo' || choice == 'bin') && (p1 > 1)){
+		throw ("Success probability must be below 1.");
 	}
 
 	console.log("Successful validation!");
@@ -297,29 +290,33 @@ function create(){
 	console.log("Sucessful submission");
 	let choice = select.options[select.selectedIndex].value;
 
-	const [p1, p2] = validate();
+	try{
+		const [p1, p2] = validate(choice);
 
-	//Graphing
-	let theo = document.getElementById('theo').checked;
-	let rand = document.getElementById('rand').checked;
-
-	let graph = [];
-
-	if(theo){
-		if(disc.includes(choice)){
-			graph.push(disGraph(p1, p2, choice));
+		//Graphing
+		let theo = document.getElementById('theo').checked;
+		let rand = document.getElementById('rand').checked;
+	
+		let graph = [];
+	
+		if(theo){
+			if(disc.includes(choice)){
+				graph.push(disGraph(p1, p2, choice));
+			}
+	
+			if(cont.includes(choice)){
+				graph.push(conGraph(p1, p2, choice));
+			}
 		}
-
-		if(cont.includes(choice)){
-			graph.push(conGraph(p1, p2, choice));
+	
+		if(rand){
+			graph.push(randGraph(p1, p2, choice, disc.includes(choice)));
 		}
+	
+		Plotly.newPlot(canvas, graph);
+	} catch(e){
+		alert(e);
 	}
-
-	if(rand){
-		graph.push(randGraph(p1, p2, choice, disc.includes(choice)));
-	}
-
-	Plotly.newPlot(canvas, graph);
 }
 
 function change(){
@@ -414,12 +411,16 @@ function validate3(){
 function CLT(){
 	let choice = select.options[select.selectedIndex].value;
 
-	const [p1, p2] = validate();
-	const p3 = validate3();
-
-	let graph = [];
-
-	graph.push(normal(p1, p2, choice, p3));
-
-	Plotly.newPlot(canvas, graph);
+	try{
+		const [p1, p2] = validate(choice);
+		const p3 = validate3();
+	
+		let graph = [];
+	
+		graph.push(normal(p1, p2, choice, p3));
+	
+		Plotly.newPlot(canvas, graph);
+	}catch(e){
+		alert(e);
+	}
 }

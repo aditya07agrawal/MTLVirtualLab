@@ -13,7 +13,7 @@
 <body>
 	<form id = "info" autocomplete="off">
 		<label for="distribution">Choose a distribution:</label>
-		<select id="distribution" onclick="change()">
+		<select id="distribution" onchange="change()">
 			<option value="" disabled selected> -- Select a distribution -- </option>
 			<optgroup label="Discrete">
 				<option value="und">Uniform - Discrete	</option>
@@ -45,7 +45,6 @@
 		
 		<input type="button" value="Go" onclick="create()">
         <a href="../index.html"><input type="button" value="Back"></a>
-		<!-- <input type="button" value="CLT" onclick="CLT()"> -->
 	</form>
 
 	<div id="graph"></div>
