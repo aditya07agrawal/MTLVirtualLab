@@ -1,10 +1,18 @@
-//GLOBAL VARIABLES
-var select = document.forms['info']['distribution'];
-var canvas = document.getElementById('graph');
+"use strict";
 
-var minp = 0.00001;		//Minimum probability shown
-var step = 0.001;		//Step of continous graphs
-var trials = 10000;		//Number of trials of an experiment
+// import Distribution from "./distribution.js";
+
+//GLOBAL VARIABLES
+const select = document.forms['info']['distribution'];
+const canvas = document.getElementById('graph');
+
+const MINP = 0.00001;							//Minimum probability shown
+const MAXP = 0.99999;							//Maximum probability shown
+const MINP_LOG = Math.log(MINP);				//Minimum probabiliy log
+const DENSITY = 1000;							//Density(Number of points per unit) of continuous graphs;
+const STEP = 1/DENSITY;							//Step of continous graphs
+const TRIALS = 10000;							//Number of trials of an experiment
+console.assert(STEP == 0.001);
 
 const disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
 const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
@@ -18,9 +26,9 @@ const parameter1 = new Map([
 	['exp', 'Rate parameter'],
 	['nor', 'Mean'],
 	['gam', 'Shape parameter'],
+	['erl', 'Shape parameter'],
 	['bet', 'Alpha'],
 	['chi', 'Degrees of freedom'],
-	['erl', 'Shape parameter'],
 	['stu', 'Degrees of freedom']
 ]);
 
@@ -30,8 +38,91 @@ const parameter2 = new Map([
 	['unc', 'End'],
 	['nor', 'Std. Dev.'],
 	['gam', 'Rate parameter'],
-	['bet', 'Beta'],
-	['erl', 'Rate parameter']
+	['erl', 'Rate parameter'],
+	['bet', 'Beta']
+]);
+
+const default_p1 = new Map([
+	['und', 0],
+	['geo', 0.5],
+	['bin', 0.5],
+	['poi', 2],
+	['unc', 0],
+	['exp', 0.5],
+	['nor', 0],
+	['gam', 2],
+	['erl', 2],
+	['bet', 2],
+	['chi', 2],
+	['stu', 1]
+]);
+
+const default_p2 = new Map([
+	['und', 4],
+	['bin', 6],
+	['unc', 4],
+	['nor', 1],
+	['gam', 1],
+	['erl', 0.5],
+	['bet', 3]
+]);
+
+const Limits = new Map([
+	['und', function (l=0, r=4){
+		return [l, r];
+	}],
+	
+	['geo', function (p=0.5, p2=0){
+		let end = Math.round(MINP_LOG/Math.log(p));
+		return [0, end];
+	}],
+
+	['bin', function (p=0.5, n=6){
+		return [0, n];
+	}],
+	
+	['poi', function (l=2, p2=0){
+		return [0, Infinity];
+	}],
+	
+	['unc', function (l=0, r=4){
+		return [l, r];
+	}],
+	
+	['exp', function (l=0.5, p2=0){
+		let end = -MINP_LOG/l;
+		return [0, end];
+	}],
+
+	['nor', function (u=0, s=1){
+		return [jStat.normal.inv(MINP, u, s), jStat.normal.inv(MAXP, u, s)];
+	}],
+
+	['gam', function (a=2, b=1){
+		return [0, jStat.gamma.inv(MAXP, a, 1/b)];
+	}],
+
+	['erl', function (k=2, l=0.5){
+		return [0, jStat.gamma.inv(MAXP, k, 1/l)];
+	}],
+
+	['bet', function (a=2, b=3){
+		let start = jStat.beta.inv(MINP, a, b);
+		let end = jStat.beta.inv(MAXP, a, b);
+		if(a >= 1) {start = 0};
+		if(b >= 1) {end = 1};
+		return [start, end];
+	}],
+
+	['chi', function (k=2, p2=0){
+		let start = jStat.chisquare.inv(MINP, k);
+		if(k >= 2) {start = 0};
+		return [start, jStat.chisquare.inv(MAXP, k)];
+	}],
+
+	['stu', function (v=1, p2=0){
+		return [Math.max(-10, jStat.studentt.inv(MINP, v)), Math.min(10, jStat.studentt.inv(MAXP, v))];
+	}]
 ]);
 
 //Helper
@@ -40,29 +131,24 @@ function beta(a, b){
 }
 
 //func
-var Dist = new Map([
-	['bin', function binomial_dist(k, p=0.5, n=6){
-		if(k < 0 || k > n) {return 0}
-		return math.combinations(n, k) * Math.pow(p, k) * Math.pow(1-p, n-k);
-	}],
-	
-	['geo', function geometric_dist(k, p=0.5, p2=0){
-		if(k < 0) {return 0}
-		return ((1-p) * Math.pow(p, k));
-	}],
-	
+const Dist = new Map([
 	['und', function uniformd_dist(k, l=0, r=4){
-		if(k < l || k > r) {return 0}
 		return 1/(r - l + 1);
 	}],
 	
+	['geo', function geometric_dist(k, p=0.5, p2=0){
+		return ((1-p) * Math.pow(p, k));
+	}],
+
+	['bin', function binomial_dist(k, p=0.5, n=6){
+		return math.combinations(n, k) * Math.pow(p, k) * Math.pow(1-p, n-k);
+	}],
+	
 	['poi', function poisson_dist(k, l=2, p2=0){
-		if(k < 0) {return 0}
 		return Math.pow(l, k) * Math.exp(-l) / math.factorial(k);
 	}],
 	
 	['unc', function uniformc_dist(x, l=0, r=4){
-		if(x < l || x >= r) {return 0}
 		return 1/(r - l);
 	}],
 	
@@ -71,13 +157,17 @@ var Dist = new Map([
 		return l*Math.exp(-l*x);
 	}],
 
-	['erl', function erlang_dist(x, k=2, l=0.5){
-		return Dist.get('gam')(x, k, l);
+	['nor', function normal_dist(x, u=0, s=1){
+		return Math.exp(-1*Math.pow((x - u)/s, 2)/2) / (Math.sqrt(2*Math.PI)*s);
 	}],
 
 	['gam', function gamma_dist(x, a=2, b=1){
 		if(x < 0) {return 0}
-		return Math.pow(x, a-1) * Math.exp(-b*x) * Math.pow(b, a) / math.gamma(a);
+		return jStat.gamma.pdf(x, a, 1/b);
+	}],
+
+	['erl', function erlang_dist(x, k=2, l=0.5){
+		return Dist.get('gam')(x, k, l);
 	}],
 
 	['bet', function beta_dist(x, a=2, b=1){
@@ -88,16 +178,22 @@ var Dist = new Map([
 		return Dist.get('gam')(x, k/2, 0.5);
 	}],
 
-	['nor', function normal_dist(x, u=0, s=1){
-		return Math.exp(-1*Math.pow((x - u)/s, 2)/2) / (Math.sqrt(2*Math.PI)*s);
-	}],
-
-	['stu', function students_t_dist(x, v=1){
-		return Math.pow(1 + ((x*x)/v), -(v+1)/2) / Math.sqrt(v) / beta(v/2, 0.5);
+	['stu', function students_t_dist(x, v=1, p2=0){
+		return jStat.studentt.pdf(x, v);
 	}]
 ]);
 
-var Rand = new Map([
+const Rand = new Map([
+	['und', function uniformd_rand(l=0, r=4){
+		return l + Math.floor((r - l + 1)*Math.random());
+	}],
+	
+	['geo', function geometric_rand(p=0.5, p2=0){
+		let x = 0;
+		while(Math.random() < p) { x++; }
+		return x;
+	}],
+	
 	['bin', function binomial_rand(p=0.5, n=6){
 		let x = 0;
 		for(let j = 0; j < n; j++){
@@ -106,16 +202,8 @@ var Rand = new Map([
 		return x;
 	}],
 	
-	['geo', function geometric_rand(p=0.5, p2=0){
-		let x = 0;
-		while(Math.random() < p){
-			x++;
-		}
-		return x;
-	}],
-	
-	['und', function uniformd_rand(l=0, r=4){
-		return l + Math.floor((r - l + 1)*Math.random());
+	['poi', function poisson_rand(l=2, p2=0){
+		return jStat.poisson.sample(l);
 	}],
 	
 	['unc', function uniformc_rand(l=0, r=4){
@@ -125,29 +213,16 @@ var Rand = new Map([
 	['exp', function exponential_rand(l=0.5, p2=0){
 		return Math.log(1 - Math.random())/(-1 * l);
 	}],
-	
-	['poi', function poisson_rand(l=2, p2=0){
-		let x = -1, r = 0;
-		while(r < 1){
-			r += Rand.get('exp')(l);
-			x++;
-		}
-		return x;
-	}],
-
-	['erl', function erlang_rand(a=2, b=1){
-		return jStat.gamma.sample(a, 1/b);
-	}],
 
 	['nor', function normal_rand(u=0, s=1){
 		return jStat.normal.sample(u, s);
 	}],
-	
-	['stu', function students_t_rand(v=1){
-		return jStat.studentt.sample(v);
-	}],
 
 	['gam', function gamma_rand(a=2, b=1){
+		return jStat.gamma.sample(a, 1/b);
+	}],
+
+	['erl', function erlang_rand(a=2, b=1){
 		return jStat.gamma.sample(a, 1/b);
 	}],
 
@@ -157,93 +232,41 @@ var Rand = new Map([
 
 	['chi', function chi_squared_dist(k=2, p2=0){
 		return jStat.chisquare.sample(k);
+	}],
+	
+	['stu', function students_t_rand(v=1){
+		return jStat.studentt.sample(v);
 	}]
 ]);
 
 //GRAPH FUNCTIONS
-function disGraph(p1, p2, dist='und'){
-	let x_axis = [], y_axis = [];
-	let start = false, end = false;
-	
-	for(let i = 0; !end ; i++){
-		x_axis.push(i);
-		y_axis.push(Dist.get(dist)(i, p1, p2));
+function distGraph(p1, p2, dist='und', dis='true'){
+	let x = [], y = [];
 
-		if(y_axis.at(-1) > minp) {start = true;}
-		if(start && y_axis.at(-1) < minp){
-			x_axis.pop();
-			y_axis.pop();
-			end = true;
-		}
-	}
+	let [start, end] = Limits.get(dist)(p1, p2);
+	let gap = (dis? 1 : STEP), dense = (dis? 1: DENSITY);
 
-	end = false;
-	for(let i = 0; !end ; i--){
-		x_axis.push(i);
-		y_axis.push(Dist.get(dist)(i, p1, p2));
+	start = Math.ceil(start * dense);
+	end = Math.trunc(end * dense);	
 
-		if(y_axis.at(-1) < minp){
-			x_axis.pop();
-			y_axis.pop();
-			end = true;
-		}
+	let total = 0;
+	for(let i = start; i <= end && (isFinite(end) || total <= MAXP); i++){
+		x.push(i*gap);
+		y.push(Dist.get(dist)(i*gap, p1, p2));
+		total += y.at(-1);
 	}
 
 	return {
 		name: "Theoretical",
-		x: x_axis, y: y_axis,
-		mode: 'markers',
-		type: 'scatter'
-	};
-}
-
-function conGraph(p1, p2, dist='unc'){
-	let x_axis = [], y_axis = [];
-	let start = false, end = false;
-	
-	for(let i = 0; !end ; i += step){
-		x_axis.push(i);
-		y_axis.push(Dist.get(dist)(i, p1, p2));
-
-		if(y_axis.at(-1) > minp) {start = true}
-		if(start && y_axis.at(-1) < minp){
-			x_axis.pop();
-			y_axis.pop();
-			end = true;
-		}
-
-		if(dist == 'bet' && i + step >= 1) {end = true}
-	}
-
-	let temp_x = [], temp_y = [];
-	end = false;
-	for(let i = -step; !end ; i -= step){
-		temp_x.push(i);
-		temp_y.push(Dist.get(dist)(i, p1, p2));
-
-		if(start && temp_y.at(-1) < minp){
-			temp_x.pop();
-			temp_y.pop();
-			end = true;
-		}
-
-		if(dist == 'bet' && i + step >= 1) {end = true}
-	}
-
-	x_axis = temp_x.reverse().concat(x_axis);
-	y_axis = temp_y.reverse().concat(y_axis);
-
-	return {
-		name: "Theoretical",
-		x: x_axis, y: y_axis,
-		mode: 'lines',
+		x: x, y: y,
+		mode: (dis? 'markers': 'lines'),
 		type: 'scatter'
 	};
 }
 
 function randGraph(p1, p2, dist='und', dis='true'){
 	let x = [];
-	for(let i = 0; i < trials; i++){
+	for(let i = 0; i < TRIALS; i++){
 		x.push(Rand.get(dist)(p1, p2));
 	}
 
@@ -257,7 +280,7 @@ function randGraph(p1, p2, dist='und', dis='true'){
 
 function normal(p1, p2, dist='und', cnt=100){
 	let x = [];
-	for(let i = 0; i < trials; i++){
+	for(let i = 0; i < TRIALS; i++){
 		x.push(0);
 		for(let j = 0; j < cnt; j++){
 			x[i] += Rand.get(dist)(p1, p2);
@@ -278,7 +301,7 @@ function validate(choice){
 	let p1 = document.getElementById('p1').value;
 	let p2 = document.getElementById('p2').value;
 
-	if(p1 == '' || (param2.includes(choice) && p2 == '')){
+	if(p1 == '' || (parameter2.has(choice) && p2 == '')){
 		throw ("Please enter the required parameters.");
 	}
 
@@ -312,13 +335,7 @@ function create(){
 		let graph = [];
 	
 		if(theo){
-			if(disc.includes(choice)){
-				graph.push(disGraph(p1, p2, choice));
-			}
-	
-			if(cont.includes(choice)){
-				graph.push(conGraph(p1, p2, choice));
-			}
+			graph.push(distGraph(p1, p2, choice, disc.includes(choice)));
 		}
 	
 		if(rand){
@@ -335,20 +352,23 @@ function change(){
 	let choice = select.options[select.selectedIndex].value;
 
 	let p1l = document.getElementById('p1l');
-	let p2l = document.getElementById('p2l');
 	let p1 = document.getElementById('p1');
+	
+	let p2l = document.getElementById('p2l');
 	let p2 = document.getElementById('p2');
 
 	p1l.hidden = false;
 	p1.hidden = false;
 
 	p1l.innerHTML = parameter1.get(choice) + ": ";
+	p1.value = default_p1.get(choice);
 
 	if(parameter2.has(choice)){
 		p2l.hidden = false;
 		p2.hidden = false;
 
 		p2l.innerHTML = parameter2.get(choice) + ": ";
+		p2.value = default_p2.get(choice);
 	}
 	else{
 		p2l.hidden = true;
