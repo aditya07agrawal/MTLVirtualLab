@@ -6,6 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 	<title>Standard Distributions</title>
 </head>
@@ -33,9 +34,10 @@
 			</optgroup>
 		</select><br><br>
 		
-		<label hidden for="p1" id="p1l">Enter the parameter:</label>
+		<label hidden for="p1" id="p1l"></label>
 		<input hidden type="text" id="p1"><br><br>
-		<label hidden for="p2" id="p2l">Enter the parameter:</label>
+		
+		<label hidden for="p2" id="p2l"></label>
 		<input hidden type="text" id="p2"><br><br>
 		
 		<input type="checkbox" id="theo" value="theo" checked>

@@ -4,11 +4,35 @@ var canvas = document.getElementById('graph');
 
 var minp = 0.00001;		//Minimum probability shown
 var step = 0.001;		//Step of continous graphs
-var trials = 10000;		//Number of rands
+var trials = 10000;		//Number of trials of an experiment
 
-const param2 = ['bin', 'und', 'unc', 'gam', 'bet', 'nor', 'erl'];				//Graphs which require 2 parameters
 const disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
 const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
+
+const parameter1 = new Map([
+	['und', 'Start'],
+	['geo', 'Success probability'],
+	['bin', 'Success probability'],
+	['poi', 'Average occurrences'],
+	['unc', 'Start'],
+	['exp', 'Rate parameter'],
+	['nor', 'Mean'],
+	['gam', 'Shape parameter'],
+	['bet', 'Alpha'],
+	['chi', 'Degrees of freedom'],
+	['erl', 'Shape parameter'],
+	['stu', 'Degrees of freedom']
+]);
+
+const parameter2 = new Map([
+	['und', 'End'],
+	['bin', 'Trials'],
+	['unc', 'End'],
+	['nor', 'Std. Dev.'],
+	['gam', 'Rate parameter'],
+	['bet', 'Beta'],
+	['erl', 'Rate parameter']
+]);
 
 //Helper
 function beta(a, b){
@@ -57,8 +81,7 @@ var Dist = new Map([
 	}],
 
 	['bet', function beta_dist(x, a=2, b=1){
-		if(x < 0 || x > 1) {return 0}
-		return Math.pow(x, a-1) * Math.pow(1-x, b-1) * beta(a,b);
+		return jStat.beta.pdf(x, a, b);
 	}],
 
 	['chi', function chi_squared_dist(x, k=2, p2=0){
@@ -113,41 +136,27 @@ var Rand = new Map([
 	}],
 
 	['erl', function erlang_rand(a=2, b=1){
-		let x = 0;
-		while(a--){
-			x += Rand.get('exp')(b);
-		}
-		return x;
+		return jStat.gamma.sample(a, 1/b);
 	}],
 
 	['nor', function normal_rand(u=0, s=1){
-		let u1 = Math.random();
-		let u2 = Math.random();
-
-		return u + s*(Math.sqrt(-2*Math.log(u1)) * Math.sin(2*Math.PI*u2));
+		return jStat.normal.sample(u, s);
 	}],
 	
 	['stu', function students_t_rand(v=1){
-		let n = v + 1;
-		
-		let x = [];
-		for(let i = 0; i < n; i++){
-			x.push(Rand.get('nor')());
-		}
+		return jStat.studentt.sample(v);
+	}],
 
-		let mean = 0;
-		for(let i of x){
-			mean += i;
-		}
-		mean /= n;
+	['gam', function gamma_rand(a=2, b=1){
+		return jStat.gamma.sample(a, 1/b);
+	}],
 
-		let S = 0;
-		for(let i of x){
-			S += (i - mean)*(i - mean);
-		}
-		S /= (n-1);
+	['bet', function beta_rand(a=2, b=1){
+		return jStat.beta.sample(a, b);
+	}],
 
-		return mean * Math.sqrt(n/S);
+	['chi', function chi_squared_dist(k=2, p2=0){
+		return jStat.chisquare.sample(k);
 	}]
 ]);
 
@@ -181,6 +190,7 @@ function disGraph(p1, p2, dist='und'){
 	}
 
 	return {
+		name: "Theoretical",
 		x: x_axis, y: y_axis,
 		mode: 'markers',
 		type: 'scatter'
@@ -224,6 +234,7 @@ function conGraph(p1, p2, dist='unc'){
 	y_axis = temp_y.reverse().concat(y_axis);
 
 	return {
+		name: "Theoretical",
 		x: x_axis, y: y_axis,
 		mode: 'lines',
 		type: 'scatter'
@@ -237,10 +248,11 @@ function randGraph(p1, p2, dist='und', dis='true'){
 	}
 
 	return {
+		name: "Randomized",
 		x: x,
 		type: 'histogram',
 		histnorm: 'probability' + (dis? '' : ' density')
-	}
+	};
 }
 
 function normal(p1, p2, dist='und', cnt=100){
@@ -314,7 +326,7 @@ function create(){
 		}
 	
 		Plotly.newPlot(canvas, graph);
-	} catch(e){
+	}catch(e){
 		alert(e);
 	}
 }
@@ -330,62 +342,18 @@ function change(){
 	p1l.hidden = false;
 	p1.hidden = false;
 
-	switch(choice){
-		case 'geo':
-		case 'bin':
-			p1l.innerHTML = "Success probability: ";
-			break;
-		case 'exp':
-			p1l.innerHTML = "Rate parameter: ";
-			break;
-		case 'poi':
-			p1l.innerHTML = "Average occurences: ";
-			break;
-		case 'und':
-		case 'unc':
-			p1l.innerHTML = "Start: ";
-			break;
-		case 'erl':
-		case 'gam':
-			p1l.innerHTML = "Shape parameter: ";
-			break;
-		case 'bet':
-			p1l.innerHTML = "Alpha: ";
-			break;
-		case 'stu':
-		case 'chi':
-			p1l.innerHTML = "Degrees of freedom: ";
-			break;
-		case 'nor':
-			p1l.innerHTML = "Mean: ";
-			break;
-	}
+	p1l.innerHTML = parameter1.get(choice) + ": ";
 
-	if(param2.includes(choice)){
+	if(parameter2.has(choice)){
 		p2l.hidden = false;
 		p2.hidden = false;
-		
-		if(choice == 'bin'){
-			p2l.innerHTML = "Number of trials: ";
-		}
-		else if(choice == 'und' || choice == 'unc'){
-			p2l.innerHTML = "End: ";
-		}
-		else if(choice == 'gam' || choice == 'erl'){
-			p2l.innerHTML = "Rate parameter: ";
-		}
-		else if(choice == 'bet'){
-			p2l.innerHTML = "Beta: ";
-		}
-		else if(choice == 'nor'){
-			p2l.innerHTML = "Standard Dev.: ";
-		}
+
+		p2l.innerHTML = parameter2.get(choice) + ": ";
 	}
 	else{
 		p2l.hidden = true;
 		p2.hidden = true;
 	}
-	
 }
 
 function validate3(){
