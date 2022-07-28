@@ -6,6 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 	<title>Central Limit Theorem</title>
 </head>
@@ -29,7 +30,6 @@
 				<option value="erl">Erlang				</option>
 				<option value="bet">Beta				</option>
 				<option value="chi">Chi-Squared			</option>
-				<option value="stu">Student's t			</option>
 			</optgroup>
 		</select><br><br>
 		
@@ -45,10 +45,12 @@
 		<input type="button" value="CLT" onclick="CLT()">
 		<a href="../index.html"><input type="button" value="Back"></a>
 	</form>
+	
+	<div><p id="mean"></p></div>
 
 	<div id="graph"></div>
 
-	<script src="../js/graphs.js" type="module"></script>
+	<script src="../js/graphs.js"></script>
 </body>
 
 </html>

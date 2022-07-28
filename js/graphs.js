@@ -10,13 +10,12 @@ const MINP = 0.00001;							//Minimum probability shown
 const MAXP = 0.99999;							//Maximum probability shown
 const MINP_LOG = Math.log(MINP);				//Minimum probabiliy log
 const DENSITY = 1000;							//Density(Number of points per unit) of continuous graphs;
-const STEP = 1/DENSITY;							//Step of continous graphs
 const TRIALS = 10000;							//Number of trials of an experiment
-console.assert(STEP == 0.001);
 
-const disc = ['und', 'geo', 'bin', 'poi'];										//Graphs which are discrete
-const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Graphs which are continuous
+const disc = ['und', 'geo', 'bin', 'poi'];										//Discrete distributions
+const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Continuous distributions
 
+//Distribution information
 const parameter1 = new Map([
 	['und', 'Start'],
 	['geo', 'Success probability'],
@@ -125,12 +124,106 @@ const Limits = new Map([
 	}]
 ]);
 
-//Helper
-function beta(a, b){
-	return (math.gamma(a) * math.gamma(b)) / math.gamma(a+b);
-}
+const Mean = new Map([
+	['und', function uniformd_mean(l=0, r=4){
+		return (l + r)/2;
+	}],
+	
+	['geo', function geometric_mean(p=0.5, p2=0){
+		return (p / (1 - p));
+	}],
 
-//func
+	['bin', function binomial_mean(p=0.5, n=6){
+		return (n * p);
+	}],
+	
+	['poi', function poisson_mean(l=2, p2=0){
+		return l;
+	}],
+	
+	['unc', function uniformc_mean(l=0, r=4){
+		return (r + l)/2;
+	}],
+	
+	['exp', function exponential_mean(l=0.5, p2=0){
+		return 1/l;
+	}],
+
+	['nor', function normal_mean(u=0, s=1){
+		return u;
+	}],
+
+	['gam', function gamma_mean(a=2, b=1){
+		return jStat.gamma.mean(a, 1/b);
+	}],
+
+	['erl', function erlang_mean(k=2, l=0.5){
+		return Mean.get('gam')(l);
+	}],
+
+	['bet', function beta_mean(a=2, b=1){
+		return jStat.beta.mean(a, b);
+	}],
+
+	['chi', function chi_squared_mean(k=2, p2=0){
+		return Mean.get('gam')(k/2, 0.5);
+	}],
+
+	['stu', function students_t_mean(v=1, p2=0){
+		return (v > 1? 0: "Undefined");
+	}]
+]);
+
+const Variance = new Map([
+	['und', function uniformd_variance(l=0, r=4){
+		return ((r - l)*(r - l + 2))/12;
+	}],
+	
+	['geo', function geometric_variance(p=0.5, p2=0){
+		return (p / ((1 - p)*(1 - p)));
+	}],
+
+	['bin', function binomial_variance(p=0.5, n=6){
+		return (n * p * (1 - p));
+	}],
+	
+	['poi', function poisson_variance(l=2, p2=0){
+		return l;
+	}],
+	
+	['unc', function uniformc_variance(l=0, r=4){
+		return ((r - l)*(r - l))/12;
+	}],
+	
+	['exp', function exponential_variance(l=0.5, p2=0){
+		return 1/(l*l);
+	}],
+
+	['nor', function normal_variance(u=0, s=1){
+		return s*s;
+	}],
+
+	['gam', function gamma_variance(a=2, b=1){
+		return jStat.gamma.variance(a, 1/b);
+	}],
+
+	['erl', function erlang_variance(k=2, l=0.5){
+		return Variance.get('gam')(l);
+	}],
+
+	['bet', function beta_variance(a=2, b=1){
+		return jStat.beta.variance(a, b);
+	}],
+
+	['chi', function chi_squared_variance(k=2, p2=0){
+		return Variance.get('gam')(k/2, 0.5);
+	}],
+
+	['stu', function students_t_variance(v=1, p2=0){
+		return (v > 2? (v/(v - 2)): "Undefined");
+	}]
+]);
+
 const Dist = new Map([
 	['und', function uniformd_dist(k, l=0, r=4){
 		return 1/(r - l + 1);
@@ -158,7 +251,7 @@ const Dist = new Map([
 	}],
 
 	['nor', function normal_dist(x, u=0, s=1){
-		return Math.exp(-1*Math.pow((x - u)/s, 2)/2) / (Math.sqrt(2*Math.PI)*s);
+		return jStat.normal.pdf(x, u, s);
 	}],
 
 	['gam', function gamma_dist(x, a=2, b=1){
@@ -240,14 +333,14 @@ const Rand = new Map([
 ]);
 
 //GRAPH FUNCTIONS
-function distGraph(p1, p2, dist='und', dis='true'){
+function distGraph(p1, p2, dist='und', dis=true){
 	let x = [], y = [];
 
 	let [start, end] = Limits.get(dist)(p1, p2);
-	let gap = (dis? 1 : STEP), dense = (dis? 1: DENSITY);
+	let freq = (dis? 1: DENSITY), gap = 1/freq;
 
-	start = Math.ceil(start * dense);
-	end = Math.trunc(end * dense);	
+	start = Math.ceil(start * freq);
+	end = Math.trunc(end * freq);	
 
 	let total = 0;
 	for(let i = start; i <= end && (isFinite(end) || total <= MAXP); i++){
@@ -264,21 +357,39 @@ function distGraph(p1, p2, dist='und', dis='true'){
 	};
 }
 
-function randGraph(p1, p2, dist='und', dis='true'){
-	let x = [];
+function randGraph(p1, p2, dist='und', dis=true){
+	if(dis){
+		const m = new Map();
+		for(let i = 0; i < TRIALS; i++){
+			let v = Rand.get(dist)(p1, p2);
+			let cnt = (m.has(v)? m.get(v): 0);
+			m.set(v, cnt+1);
+		}
+		const x = Array.from(m.keys());
+		const y = (Array.from(m.values())).map((x) => x/TRIALS);
+
+		return{
+			name: "Randomized",
+			type: 'bar',
+			x: x, y: y,
+			width: 0.4
+		}
+	}
+
+	const res = [];
 	for(let i = 0; i < TRIALS; i++){
-		x.push(Rand.get(dist)(p1, p2));
+		res.push(Rand.get(dist)(p1, p2));
 	}
 
 	return {
 		name: "Randomized",
-		x: x,
+		x: res,
 		type: 'histogram',
-		histnorm: 'probability' + (dis? '' : ' density')
+		histnorm: 'probability density'
 	};
 }
 
-function normal(p1, p2, dist='und', cnt=100){
+function normal(p1, p2, dist='und', cnt=100, dis=true){
 	let x = [];
 	for(let i = 0; i < TRIALS; i++){
 		x.push(0);
@@ -289,14 +400,19 @@ function normal(p1, p2, dist='und', cnt=100){
 	}
 
 	return {
+		name: "Experimental",
 		x: x,
 		type: 'histogram',
-		histnorm: 'probability density'
+		histnorm: 'probability' + (dis? '' : ' density')
 	}
 }
 
 //MAIN FUNCTIONS
 function validate(choice){
+	if(choice == ""){
+		throw ("Please choose a distribution.");
+	}
+
 	//Validation of inputed parameters
 	let p1 = document.getElementById('p1').value;
 	let p2 = document.getElementById('p2').value;
@@ -323,7 +439,15 @@ function validate(choice){
 
 function create(){
 	console.log("Sucessful submission");
-	let choice = select.options[select.selectedIndex].value;
+	const choice = select.options[select.selectedIndex].value;
+	const discrete = disc.includes(choice);
+
+	const layout = {
+		xaxis: {title: "x"},
+		yaxis: {
+			title: "Probability " + (discrete? "Mass": "Density")
+		}
+	};
 
 	try{
 		const [p1, p2] = validate(choice);
@@ -335,14 +459,15 @@ function create(){
 		let graph = [];
 	
 		if(theo){
-			graph.push(distGraph(p1, p2, choice, disc.includes(choice)));
+			graph.push(distGraph(p1, p2, choice, discrete));
 		}
 	
 		if(rand){
-			graph.push(randGraph(p1, p2, choice, disc.includes(choice)));
+			graph.push(randGraph(p1, p2, choice, discrete));
 		}
 	
-		Plotly.newPlot(canvas, graph);
+		Plotly.newPlot(canvas, graph, layout);
+		outputMean(choice, p1, p2);
 	}catch(e){
 		alert(e);
 	}
@@ -402,13 +527,24 @@ function CLT(){
 	try{
 		const [p1, p2] = validate(choice);
 		const p3 = validate3();
+
+		const mean = Mean.get(choice)(p1, p2);
+		const sd = Math.sqrt(Variance.get(choice)(p1, p2)/p3)
 	
 		let graph = [];
 	
-		graph.push(normal(p1, p2, choice, p3));
+		graph.push(normal(p1, p2, choice, p3, disc.includes(choice)));
+		graph.push(distGraph(mean, sd, 'nor', false));
 	
 		Plotly.newPlot(canvas, graph);
+		outputMean(choice, p1, p2);
 	}catch(e){
 		alert(e);
 	}
+}
+
+function outputMean(choice, p1=0, p2=0){
+	let val = Mean.get(choice)(p1, p2);
+	let txt = "Mean = " + val.toString();
+	document.getElementById('mean').innerHTML = txt;
 }

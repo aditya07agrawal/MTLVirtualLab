@@ -1,6 +1,8 @@
 export default class Distribution{
     parameter1;
     parameter2;
+    default1;
+    default2;
     dist;
     
     constructor(p1="", p2=""){
