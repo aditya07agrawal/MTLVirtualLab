@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head id="std">
+<head id="cdf">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,11 +10,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 
-	<title>Standard Distributions</title>
+	<title>Cumulative distributions</title>
 </head>
 
 <body>
-	<h3>Standard Distributions</h3>
+	<h3>Cumulative distributions</h3>
 
 	<form id = "info" autocomplete="off">
 		<label for="distribution">Choose a distribution:</label>
@@ -38,7 +38,7 @@
 			</optgroup>
 		</select>
 
-		<input type="button" value="Go" onclick="PDF()"><br>
+		<input type="button" value="Go" onclick="CDF()"><br>
 
 		<table>
 			<colgroup>
@@ -54,20 +54,13 @@
 			</tr>
 			<tr>
 				<td><label class="parameter" for="x" id="xl">x = </label></td>
-				<td class="input"><input class="parameter" type="text" id="x" onchange="outputProbability()"></td>
+				<td class="input"><input class="parameter" type="text" id="x" onchange="outputCumulativeProbability()"></td>
 
-				<td><label class="parameter" for="pr" id="prl"></label></td>
+				<td><label class="parameter" for="pr" id="prl">P(X &lt= x)</label></td>
 				<td class="input"><input disabled class="parameter" type="text" id="pr"></td>
 			</tr>
 		</table><br>
-
-		<input type="checkbox" id="theo" value="theo" checked>
-		<label for="theo">Theoretical</label><br>
-		<input type="checkbox" id="rand" value="rand">
-		<label for="rand">Randomized</label><br>
 	</form>
-
-	<div id="moments"><p id="mean"></p></div>
 
 	<div id="graph"></div>
 	

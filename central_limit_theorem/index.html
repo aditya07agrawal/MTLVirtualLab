@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head id="clt">
 	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="../css/style.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+
 	<title>Central Limit Theorem</title>
 </head>
 
 <body>
+	<h3>Central Limit Theorem</h3>
+
 	<form id = "info" autocomplete="off">
 		<label for="distribution">Choose a distribution:</label>
 		<select id="distribution" onchange="change()">
@@ -30,26 +34,37 @@
 				<option value="erl">Erlang				</option>
 				<option value="bet">Beta				</option>
 				<option value="chi">Chi-Squared			</option>
+				<!-- <option value="stu">Student's t			</option> -->
 			</optgroup>
-		</select><br><br>
-		
-		<label hidden for="p1" id="p1l"></label>
-		<input hidden type="text" id="p1"><br><br>
-		
-		<label hidden for="p2" id="p2l"></label>
-		<input hidden type="text" id="p2"><br><br>
-		
+		</select><br>
+
+		<table>
+			<colgroup>
+				<col> <col class="input">
+				<col> <col class="input">
+			</colgroup>
+			<tr>
+				<td><label class="parameter" for="p1" id="p1l"></label></td>
+				<td class="input"><input class="parameter" type="text" id="p1"></td>
+
+				<td><label class="parameter" for="p2" id="p2l"></label></td>
+				<td class="input"><input class="parameter" type="text" id="p2"></td>
+			</tr>
+		</table><br>
+
 		<label for="p3" id="p3l">Enter the number of random variables:</label>
-		<input type="text" id="p3" value="100"><br><br>
-		
-		<input type="button" value="CLT" onclick="CLT()">
-		<a href="../index.html"><input type="button" value="Back"></a>
+		<input type="text" id="p3" value="100">
+
+		<input type="button" value="Go" onclick="CLT()"><br>
 	</form>
-	
-	<div><p id="mean"></p></div>
+
+	<div id="moments"><p id="mean"></p></div>
 
 	<div id="graph"></div>
 
+	<a href="../index.html"><input type="button" class="home" value="Back"></a>
+
+	<script src="../js/global_constants.js"></script>
 	<script src="../js/graphs.js"></script>
 </body>
 
