@@ -10,11 +10,20 @@ const canvas = document.getElementById('graph');
 const layout = {
 	xaxis: {title: "x"},
 	yaxis: {
-		showline: true
+		showline: true,
+		rangemode: 'nonnegative'
 	},
 	paper_bgcolor: 'rgba(0, 0, 0, 0)',
 	plot_bgcolor: 'rgba(0, 0, 0, 0)',
 	margin: {t: 50}
+};
+
+const attributes ={
+	axis: true,
+	boundingbox: [-5, 1.1, -0.1, 5],
+	pan: {
+		needShift: false
+	}
 };
 
 //Useful constants
@@ -266,7 +275,7 @@ const Dist = new Map([
 	}],
 	
 	['unc', function uniformc_dist(x, l=0, r=4){
-		if(k < l || k > r) {return 0;}
+		if(x < l || x > r) {return 0;}
 		return 1/(r - l);
 	}],
 	
@@ -303,7 +312,7 @@ const Dist = new Map([
 
 const cDist = new Map([
 	['und', function uniformd_cdf(k, l=0, r=4){
-		return max(0, min((Math.floor(k) - l + 1)/(r - l + 1), 1));
+		return Math.max(0, Math.min((Math.floor(k) - l + 1)/(r - l + 1), 1));
 	}],
 	
 	['geo', function geometric_cdf(k, p=0.5, p2=0){

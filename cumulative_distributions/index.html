@@ -6,9 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.5/jsxgraph.min.css">
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.5/jsxgraphcore.js"></script>
 
 	<title>Cumulative distributions</title>
 </head>
@@ -38,7 +41,7 @@
 			</optgroup>
 		</select>
 
-		<input type="button" value="Go" onclick="CDF()"><br>
+		<input type="button" value="Go" onclick="CDF2()"><br>
 
 		<table>
 			<colgroup>
@@ -62,9 +65,19 @@
 		</table><br>
 	</form>
 
-	<div id="graph"></div>
+	<!-- <div id="graph"></div> -->
+	<div id="graph" class="jxgbox" style="height:480px;"></div>
 	
 	<a href="../index.html"><input type="button" class="home" value="Back"></a>
+
+	<script>
+		const att = {
+			axis: true,
+			boundingbox: [-5, 1.1, 5, -0.1]
+		};
+
+		const board2 = JXG.JSXGraph.initBoard('graph', att);
+	</script>
 
 	<script src="../js/global_constants.js"></script>
 	<script src="../js/graphs.js"></script>

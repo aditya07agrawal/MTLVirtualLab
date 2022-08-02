@@ -108,6 +108,10 @@ function cumuGraph(p1, p2, dist='und', dis=true){
 	};
 }
 
+function cumuGraph2(p1, p2, dist='und'){
+	return x => {return cDist.get(dist)(x, p1, p2)};
+}
+
 //MAIN FUNCTIONS
 function validate(choice){
 	if(choice == ""){
@@ -203,6 +207,24 @@ function CDF(){
 		graph.push(cumuGraph(p1, p2, choice, discrete));
 
 		Plotly.newPlot(canvas, graph, layout);
+	}catch(e){
+		alert(e);
+	}
+}
+
+function CDF2(){
+	const choice = select.options[select.selectedIndex].value;
+	const discrete = disc.includes(choice);
+
+	layout.yaxis.title = "Probability " + (discrete? "Mass": "Density");
+
+	try{
+		const [p1, p2] = validate(choice);
+		const [s, e] = Limits.get(choice)(p1, p2);
+
+		board2.removeObject(['plt']);
+		board2.setBoundingBox([s-0.1, 1.1, Math.min(e, 10)+0.1, -0.1]);
+		board2.create('functiongraph', [cumuGraph2(p1, p2, choice)], {id: 'plt'});
 	}catch(e){
 		alert(e);
 	}
