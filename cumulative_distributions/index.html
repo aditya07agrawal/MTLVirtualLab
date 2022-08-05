@@ -12,6 +12,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.5/jsxgraphcore.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 	<title>Cumulative distributions</title>
 </head>
@@ -43,6 +44,10 @@
 
 		<input type="button" value="Go" onclick="CDF()"><br>
 
+		<div id="function">
+			<span id="func"></span>
+		</div>
+
 		<table>
 			<colgroup>
 				<col> <col class="input">
@@ -56,7 +61,7 @@
 				<td class="input"><input class="parameter" type="text" id="p2"></td>
 			</tr>
 			<tr>
-				<td><label class="parameter" for="x" id="xl">x = </label></td>
+				<td><label class="parameter" for="x" id="xl">\(x = \)</label></td>
 				<td class="input"><input class="parameter" type="text" id="x" onchange="outputCumulativeProbability()"></td>
 
 				<td><label class="parameter" for="pr" id="prl">P(X &lt= x)</label></td>

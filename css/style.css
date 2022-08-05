@@ -48,10 +48,12 @@ table {
   margin: auto;
   table-layout: fixed;
   width: 60%;
+  /* border: solid black 1px; */
 }
 
 td.input {
   text-align: left;
+  /* border: solid black 1px; */
 }
 
 col.input {
@@ -75,6 +77,19 @@ h3 {
   border: solid black 2px;
 }
 
+div#function {
+  text-align: center;
+  height: 132px;
+  line-height: 132px;
+  border: solid black 2px;
+}
+
+span#func {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  border: dotted black 1px;
+}
 
 /**/
 p.mathjaxText {

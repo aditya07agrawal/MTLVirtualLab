@@ -230,20 +230,48 @@ function change(){
 	const elements = document.getElementsByClassName('parameter');
 	for(let e of elements) {e.style.visibility = "visible";}
 
-	document.getElementById('p1l').innerHTML = parameter1.get(choice) + ": ";
-	document.getElementById('p1').value = default_p1.get(choice);
+	const p1l = document.getElementById('p1l');
+	const p1 = document.getElementById('p1');
+
+	const p2l = document.getElementById('p2l');
+	const p2 = document.getElementById('p2');
+
+	p1l.innerHTML = "\\( " + parameter1.get(choice) + " = \\)";
+	p1.value = default_p1.get(choice);
 
 	if(parameter2.has(choice)){
-		document.getElementById('p2l').innerHTML = parameter2.get(choice) + ": ";
-		document.getElementById('p2').value = default_p2.get(choice);
+		p2l.innerHTML = "\\( " + parameter2.get(choice) + " = \\)";
+		p2.value = default_p2.get(choice);
 	}
 	else{
 		p2l.style.visibility = "hidden";
 		p2.style.visibility = "hidden";
 	}
 
+	MathJax.typeset([p1l, p2l]);
+
 	if(document.head.id == "std"){
-		document.getElementById('prl').innerHTML = (disc.includes(choice)? "P(X = x) = ": "p(x) = ");
+		const prl = document.getElementById('prl');
+		prl.innerHTML = (disc.includes(choice)? '\\(P(X = x) = \\)': '\\(p(x) = \\)');
+		MathJax.typeset([prl]);
+	}
+
+	if(document.head.id == "cdf"){
+		const prl = document.getElementById("prl");
+		prl.innerHTML = '\\(P(X \\leq x) = \\)';
+		MathJax.typeset([prl]);
+	}
+
+	if(document.head.id == "std" || document.head.id == "clt"){
+		const func = document.getElementById('func');
+		func.innerHTML = "\\[ " + proFunc.get(choice) + " \\]";
+		MathJax.typeset([func]);
+	}
+
+	if(document.head.id == "cdf"){
+		const func = document.getElementById('func');
+		func.innerHTML = "\\[ " + cumFunc.get(choice) + " \\]";
+		MathJax.typeset([func]);
 	}
 }
 

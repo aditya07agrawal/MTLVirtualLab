@@ -9,6 +9,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 	<title>Standard Distributions</title>
 </head>
@@ -40,6 +41,10 @@
 
 		<input type="button" value="Go" onclick="PDF()"><br>
 
+		<div id="function">
+			<span id="func"></span>
+		</div>
+
 		<table>
 			<colgroup>
 				<col> <col class="input">
@@ -53,7 +58,7 @@
 				<td class="input"><input class="parameter" type="text" id="p2"></td>
 			</tr>
 			<tr>
-				<td><label class="parameter" for="x" id="xl">x = </label></td>
+				<td><label class="parameter" for="x" id="xl">\(x = \)</label></td>
 				<td class="input"><input class="parameter" type="text" id="x" onchange="outputProbability()"></td>
 
 				<td><label class="parameter" for="pr" id="prl"></label></td>
@@ -67,7 +72,7 @@
 		<label for="rand">Randomized</label><br>
 	</form>
 
-	<div id="moments"><p id="mean"></p></div>
+	<div id="moments"><p id="mean">\(EX = \)</p></div>
 
 	<div id="graph"></div>
 	

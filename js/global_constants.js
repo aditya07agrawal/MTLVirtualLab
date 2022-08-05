@@ -38,28 +38,28 @@ const disc = ['und', 'geo', 'bin', 'poi'];										//Discrete distributions
 const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Continuous distributions
 
 const parameter1 = new Map([
-	['und', 'Start'],
-	['geo', 'Success probability'],
-	['bin', 'Success probability'],
-	['poi', 'Average occurrences'],
-	['unc', 'Start'],
-	['exp', 'Rate parameter'],
-	['nor', 'Mean'],
-	['gam', 'Shape parameter'],
-	['erl', 'Shape parameter'],
-	['bet', 'Alpha'],
-	['chi', 'Degrees of freedom'],
-	['stu', 'Degrees of freedom']
+	['und', 'a'],
+	['geo', 'p'],
+	['bin', 'p'],
+	['poi', '\\lambda'],
+	['unc', 'a'],
+	['exp', '\\lambda'],
+	['nor', '\\mu'],
+	['gam', '\\alpha'],
+	['erl', '\\alpha'],
+	['bet', '\\alpha'],
+	['chi', '\\nu'],
+	['stu', '\\nu']
 ]);
 
 const parameter2 = new Map([
-	['und', 'End'],
-	['bin', 'Trials'],
-	['unc', 'End'],
-	['nor', 'Std. Dev.'],
-	['gam', 'Rate parameter'],
-	['erl', 'Rate parameter'],
-	['bet', 'Beta']
+	['und', 'b'],
+	['bin', 'n'],
+	['unc', 'b'],
+	['nor', '\\sigma'],
+	['gam', '\\beta'],
+	['erl', '\\beta'],
+	['bet', '\\beta']
 ]);
 
 const default_p1 = new Map([
@@ -417,4 +417,110 @@ const Rand = new Map([
 	['stu', function students_t_rand(v=1){
 		return jStat.studentt.sample(v);
 	}]
+]);
+
+const proFunc = new Map([
+	['und', `P(X = k) = \\frac{1}{b - a + 1}`],
+	
+	['geo', `P(X = k) = (1 - p) \\cdot p^{k}`],
+	
+	['bin', `P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1 - p)^{n-k}`],
+	
+	['poi', `P(X = k) = e^{-\\lambda}\\cdot\\dfrac{\\lambda^k}{k!}`],
+	
+	['unc', `p(x) = 
+		\\begin{cases}
+			\\dfrac{1}{b - a} & x \\in [a, b] \\\\ 
+			0 & \\text{otherwise}
+		\\end{cases}`],
+	
+	['exp', `p(x) = 
+		\\begin{cases}
+			\\lambda e^{-\\lambda x} & x \\geq 0 \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
+	
+	['nor', `p(x) = 
+		\\dfrac{1}{\\sigma\\sqrt{2\\pi}}\\cdot e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}`],
+	
+	['gam', `p(x) = 
+		\\begin{cases}
+			\\dfrac{x^{\\alpha-1}e^{-\\beta x}\\beta^\\alpha}{\\Gamma(\\alpha)} & x \\geq 0 \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
+
+	['erl', `p(x) = 
+		\\begin{cases}
+			\\dfrac{x^{\\alpha-1}e^{-\\beta x}\\beta^\\alpha}{\\Gamma(\\alpha)} & x \\geq 0 \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
+	
+	['bet', `p(x) = 
+		\\begin{cases}
+			\\dfrac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha, \\beta)} & x \\in [0, 1] \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
+
+	['chi', `p(x) = 
+		\\begin{cases}
+			\\dfrac{x^{k/2 - 1}e^{-x/2}}{2^{k/2}\\cdot\\Gamma(k/2)} & x \\geq 0 \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
+
+	['stu', `p(x) = 
+		\\dfrac{\\Gamma\\left(\\frac{\\nu+1}{2}\\right)}{\\sqrt{\\nu\\pi}\\ \\Gamma(\\frac{\\nu}{2})}\\left(1 + \\dfrac{x^2}{\\nu}\\right)^{-(v+1)/2}`]
+]);
+
+const cumFunc = new Map([
+	['und', `P(X \\leq k) = \\frac{k - a + 1}{b - a + 1}`],
+	
+	['geo', `P(X \\leq k) = 1 - p^{k+1}`],
+	
+	['bin', `P(X \\leq k) = \\sum_{r = 0}^{r=k} \\binom{n}{r} \\cdot p^r \\cdot (1 - p)^{n-r}`],
+	
+	['poi', `P(X \\leq k) = \\sum_{r = 0}^{r=k}  e^{-\\lambda}\\cdot\\dfrac{\\lambda^r}{r!}`],
+	
+	['unc', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < a \\\\
+			\\dfrac{x}{b - a} & x \\in [a, b] \\\\ 
+			1 & x > b
+		\\end{cases}`],
+	
+	['exp', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			1 - e^{-\\lambda x} & x \\geq 0
+		\\end{cases}`],
+	
+	['nor', `P(X \\leq x) = 
+		\\int_{-\\infty}^{x} \\dfrac{1}{\\sigma\\sqrt{2\\pi}}\\cdot e^{-\\frac{1}{2}\\left(\\frac{t-\\mu}{\\sigma}\\right)^2} dt`],
+	
+	['gam', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			\\displaystyle \\int_{0}^{x} \\dfrac{t^{\\alpha-1}e^{-\\beta t}\\beta^\\alpha}{\\Gamma(\\alpha)} dt & x \\geq 0
+		\\end{cases}`],
+
+	['erl', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			\\displaystyle \\int_{0}^{x} \\dfrac{t^{\\alpha-1}e^{-\\beta t}\\beta^\\alpha}{\\Gamma(\\alpha)} dt & x \\geq 0
+		\\end{cases}`],
+	
+	['bet', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			\\displaystyle \\int_{0}^{x} \\dfrac{t^{\\alpha-1}(1-t)^{\\beta-1}}{B(\\alpha, \\beta)} dt & x \\in [0, 1] \\\\
+			1 & x > 1
+		\\end{cases}`],
+
+	['chi', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			\\displaystyle \\int \\dfrac{x^{k/2 - 1}e^{-x/2}}{2^{k/2}\\cdot\\Gamma(k/2)} & x \\geq 0
+		\\end{cases}`],
+
+	['stu', `P(X \\leq x) = 
+		\\int_{-\\infty}^{x} \\dfrac{\\Gamma\\left((\\nu+1)/2\\right)}{\\sqrt{\\nu\\pi}\\ \\Gamma(\\nu/2)}\\left(1 + \\dfrac{t^2}{\\nu}\\right)^{-(v+1)/2} dt`]
 ]);
