@@ -83,32 +83,7 @@ function clteGraph(p1, p2, dist='und', cnt=100, dis=true){
 	return trace;
 }
 
-function cumuGraph(p1, p2, dist='und', dis=true){
-	let x = [], y = [];
-
-	let [start, end] = Limits.get(dist)(p1, p2);
-	let freq = DENSITY, gap = 1/freq;
-
-	start = Math.ceil(start * freq);
-	end = Math.trunc(end * freq);
-
-	x.push(start*gap - gap);
-	y.push(0);
-
-	for(let i = start; i <= end && (isFinite(end) || y.at(-1) <= MAXP); i++){
-		x.push(i*gap);
-		y.push(cDist.get(dist)(i*gap, p1, p2));
-	}
-
-	return {
-		name: "Theoretical",
-		x: x, y: y,
-		mode: 'lines',
-		type: 'scatter'
-	};
-}
-
-function cumuGraph2(p1, p2, dist='und'){
+function cumuGraph(p1, p2, dist='und'){
 	return x => {return cDist.get(dist)(x, p1, p2)};
 }
 
@@ -200,33 +175,28 @@ function CDF(){
 
 	try{
 		const [p1, p2] = validate(choice);
-
-		//Graphing
-		let graph = [];
-
-		graph.push(cumuGraph(p1, p2, choice, discrete));
-
-		Plotly.newPlot(canvas, graph, layout);
-	}catch(e){
-		alert(e);
-	}
-}
-
-function CDF2(){
-	const choice = select.options[select.selectedIndex].value;
-	const discrete = disc.includes(choice);
-
-	layout.yaxis.title = "Probability " + (discrete? "Mass": "Density");
-
-	try{
-		const [p1, p2] = validate(choice);
 		const [s, e] = Limits.get(choice)(p1, p2);
 
-		board2.removeObject(['plt']);
-		board2.setBoundingBox([s-0.1, 1.1, Math.min(e, 10)+0.1, -0.1]);
-		board2.create('functiongraph', [cumuGraph2(p1, p2, choice)], {id: 'plt'});
-	}catch(e){
-		alert(e);
+		attributes.boundingbox = [s-0.1, 1.1, Math.min(e, 10)+0.1, -0.1];
+
+		var board = null;
+		if(board != null){
+			JXG.JSXGraph.freeBoard(board);
+		}
+		board = JXG.JSXGraph.initBoard('graph', attributes);
+		
+		board.create('functiongraph', [cumuGraph(p1, p2, choice)], {name: 'plt1'});
+
+		if(discrete){
+			const x = [], y = [];
+			for(let i = s; i <= Math.min(e, 10); i++){
+				x.push(i);
+				y.push(cDist.get(choice)(i, p1, p2));
+			}
+			board.create('chart', [x, y], {chartStyle:'point', name:'plt2'});
+		}
+	}catch(err){
+		alert(err);
 	}
 }
 

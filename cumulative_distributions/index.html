@@ -41,7 +41,7 @@
 			</optgroup>
 		</select>
 
-		<input type="button" value="Go" onclick="CDF2()"><br>
+		<input type="button" value="Go" onclick="CDF()"><br>
 
 		<table>
 			<colgroup>
@@ -65,19 +65,9 @@
 		</table><br>
 	</form>
 
-	<!-- <div id="graph"></div> -->
 	<div id="graph" class="jxgbox" style="height:480px;"></div>
 	
 	<a href="../index.html"><input type="button" class="home" value="Back"></a>
-
-	<script>
-		const att = {
-			axis: true,
-			boundingbox: [-5, 1.1, 5, -0.1]
-		};
-
-		const board2 = JXG.JSXGraph.initBoard('graph', att);
-	</script>
 
 	<script src="../js/global_constants.js"></script>
 	<script src="../js/graphs.js"></script>
