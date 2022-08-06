@@ -51,28 +51,28 @@
 				<col> <col class="input">
 			</colgroup>
 			<tr>
-				<td><label class="parameter" for="p1" id="p1l"></label></td>
-				<td class="input"><input class="parameter" type="text" id="p1"></td>
+				<td><label class="hidden" for="p1" id="p1l"></label></td>
+				<td class="input"><input class="hidden" type="text" id="p1"></td>
 
-				<td><label class="parameter" for="p2" id="p2l"></label></td>
-				<td class="input"><input class="parameter" type="text" id="p2"></td>
+				<td><label class="hidden" for="p2" id="p2l"></label></td>
+				<td class="input"><input class="hidden" type="text" id="p2"></td>
 			</tr>
 			<tr>
-				<td><label class="parameter" for="x" id="xl">\(x = \)</label></td>
-				<td class="input"><input class="parameter" type="text" id="x" onchange="outputProbability()"></td>
+				<td><label class="hidden" for="x" id="xl">\(x = \)</label></td>
+				<td class="input"><input class="hidden" type="text" id="x" onchange="outputProbability()"></td>
 
-				<td><label class="parameter" for="pr" id="prl"></label></td>
-				<td class="input"><input disabled class="parameter" type="text" id="pr"></td>
+				<td><label class="hidden" for="pr" id="prl"></label></td>
+				<td class="input"><input disabled class="hidden" type="text" id="pr"></td>
 			</tr>
 		</table><br>
 
-		<input type="checkbox" id="theo" value="theo" checked>
-		<label for="theo">Theoretical</label><br>
-		<input type="checkbox" id="rand" value="rand">
-		<label for="rand">Randomized</label><br>
+		<input class="hidden" type="checkbox" id="theo" value="theo" checked>
+		<label class="hidden" for="theo">Theoretical</label><br>
+		<input class="hidden" type="checkbox" id="rand" value="rand">
+		<label class="hidden" for="rand">Randomized</label><br>
 	</form>
 
-	<div id="moments"><p id="mean">\(EX = \)</p></div>
+	<div class="mathjaxMoments hidden" id="moments" ></div>
 
 	<div id="graph"></div>
 	

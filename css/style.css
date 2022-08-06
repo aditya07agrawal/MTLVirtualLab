@@ -40,7 +40,7 @@ select {
   float: right;
 }
 
-.parameter {
+.hidden {
   visibility: hidden;
 }
 
@@ -117,8 +117,8 @@ p.small {
   margin-bottom: 5px;
 }
 
-p.mathjaxMoments {
-  font-size: 70%;
+.mathjaxMoments {
+  font-size: 90%;
   font-family: sans-serif;
   margin: auto;
   text-align: center;

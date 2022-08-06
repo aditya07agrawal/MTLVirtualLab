@@ -49,21 +49,21 @@
 				<col> <col class="input">
 			</colgroup>
 			<tr>
-				<td><label class="parameter" for="p1" id="p1l"></label></td>
-				<td class="input"><input class="parameter" type="text" id="p1"></td>
+				<td><label class="hidden" for="p1" id="p1l"></label></td>
+				<td class="input"><input class="hidden" type="text" id="p1"></td>
 
-				<td><label class="parameter" for="p2" id="p2l"></label></td>
-				<td class="input"><input class="parameter" type="text" id="p2"></td>
+				<td><label class="hidden" for="p2" id="p2l"></label></td>
+				<td class="input"><input class="hidden" type="text" id="p2"></td>
 			</tr>
 		</table><br>
 
-		<label for="p3" id="p3l">Enter the number of random variables:</label>
-		<input type="text" id="p3" value="100">
+		<label class="hidden" for="p3" id="p3l">Enter the number of random variables:</label>
+		<input class="hidden" type="text" id="p3" value="100">
 
-		<input type="button" value="Go" onclick="CLT()"><br>
+		<input class="hidden" type="button" value="Go" onclick="CLT()"><br>
 	</form>
 
-	<div id="moments"><p id="mean"></p></div>
+	<div class="mathjaxMoments hidden" id="moments" ></div>
 
 	<div id="graph"></div>
 

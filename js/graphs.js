@@ -2,6 +2,11 @@
 
 // import Distribution from "./distribution.js";
 
+//HELPER FUNCTIONS
+function round(x){
+	return Math.round(x*1000)/1000;
+}
+
 //GRAPH FUNCTIONS
 function distGraph(p1, p2, dist='und', dis=true){
 	let x = [], y = [];
@@ -161,7 +166,7 @@ function PDF(){
 		}
 
 		Plotly.newPlot(canvas, graph, layout);
-		outputMean(choice, p1, p2);
+		outputMoments(choice, p1, p2);
 	}catch(e){
 		alert(e);
 	}
@@ -219,7 +224,7 @@ function CLT(){
 		graph.push(distGraph(mean, sd, 'nor', false));
 
 		Plotly.newPlot(canvas, graph, layout);
-		outputMean(choice, p1, p2);
+		outputMoments(choice, p1, p2);
 	}catch(e){
 		alert(e);
 	}
@@ -228,8 +233,8 @@ function CLT(){
 function change(){
 	let choice = select.options[select.selectedIndex].value;
 
-	const elements = document.getElementsByClassName('parameter');
-	for(let e of elements) {e.style.visibility = "visible";}
+	const elements = document.getElementsByClassName('hidden');
+	while(elements.length > 0) {elements[0].classList.remove('hidden');}
 
 	const p1l = document.getElementById('p1l');
 	const p1 = document.getElementById('p1');
@@ -276,10 +281,17 @@ function change(){
 	}
 }
 
-function outputMean(choice, p1=0, p2=0){
-	let val = Mean.get(choice)(p1, p2);
-	let txt = "Mean = " + val.toString();
-	document.getElementById('mean').innerHTML = txt;
+function outputMoments(choice, p1=0, p2=0){
+	const mom = document.getElementById('moments')
+	let txt = "";
+	let mean = round(Mean.get(choice)(p1, p2));
+	let variance = round(Variance.get(choice)(p1, p2));
+
+	txt += "\\(\\mu = E(X) = " + mean + "\\hspace{2cm}\\)";
+	txt += "\\(\\sigma^2 = Var(X) = " + variance + "\\)";
+	
+	mom.innerHTML = txt;
+	MathJax.typeset([mom]);
 }
 
 function outputProbability(){
