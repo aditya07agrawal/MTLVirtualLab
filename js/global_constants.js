@@ -5,6 +5,7 @@
 //HTML Elements
 const select = document.forms['info']['distribution'];
 const canvas = document.getElementById('graph');
+var board = null;
 
 //Graphstyling
 const layout = {
@@ -18,11 +19,32 @@ const layout = {
 	margin: {t: 50}
 };
 
-const attributes ={
+const attributes = {
 	axis: true,
 	boundingbox: [-5, 1.1, -0.1, 5],
+	showcopyright: false,
 	pan: {
 		needShift: false
+	},
+	defaultAxes: {
+		x: {
+			name: "\\(x\\)",
+			withLabel: true,
+			label: {
+				position: 'rt',
+				offset: [-10, 10],
+				useMathJax: true
+			}
+		},
+		y: {
+			name: "\\(P(X\\leq x)\\)",
+			withLabel: true,
+			label: {
+				position: 'rt',
+				offset: [10, -20],
+				useMathJax: true
+			}
+		}
 	}
 };
 
@@ -102,7 +124,8 @@ const Limits = new Map([
 	}],
 	
 	['poi', function (l=2, p2=0){
-		return [0, Infinity];
+		//return [0, Infinity];
+		return [0, 7*Math.pow(l, 0.6)];
 	}],
 	
 	['unc', function (l=0, r=4){

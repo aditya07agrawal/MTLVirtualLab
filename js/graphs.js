@@ -177,9 +177,10 @@ function CDF(){
 		const [p1, p2] = validate(choice);
 		const [s, e] = Limits.get(choice)(p1, p2);
 
-		attributes.boundingbox = [s-0.1, 1.1, Math.min(e, 10)+0.1, -0.1];
+		const margin = (e - s)/20;
 
-		var board = null;
+		attributes.boundingbox = [s-margin, 1.1, e+margin, -0.1];
+
 		if(board != null){
 			JXG.JSXGraph.freeBoard(board);
 		}
@@ -189,7 +190,7 @@ function CDF(){
 
 		if(discrete){
 			const x = [], y = [];
-			for(let i = s; i <= Math.min(e, 10); i++){
+			for(let i = s; i <= e; i++){
 				x.push(i);
 				y.push(cDist.get(choice)(i, p1, p2));
 			}
