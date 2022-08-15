@@ -250,8 +250,8 @@ function change(){
 		p2.value = default_p2.get(choice);
 	}
 	else{
-		p2l.style.visibility = "hidden";
-		p2.style.visibility = "hidden";
+		p2l.classList.add('hidden');
+		p2.classList.add('hidden');
 	}
 
 	MathJax.typeset([p1l, p2l]);
@@ -284,8 +284,11 @@ function change(){
 function outputMoments(choice, p1=0, p2=0){
 	const mom = document.getElementById('moments')
 	let txt = "";
-	let mean = round(Mean.get(choice)(p1, p2));
-	let variance = round(Variance.get(choice)(p1, p2));
+	let mean = Mean.get(choice)(p1, p2);
+	let variance = Variance.get(choice)(p1, p2);
+
+	mean = (mean == "Undefined"? mean: round(mean));
+	variance = (variance == "Undefined"? variance:round(variance));
 
 	txt += "\\(\\mu = E(X) = " + mean + "\\hspace{2cm}\\)";
 	txt += "\\(\\sigma^2 = Var(X) = " + variance + "\\)";
