@@ -443,13 +443,13 @@ const Rand = new Map([
 ]);
 
 const proFunc = new Map([
-	['und', `P(X = k) = \\frac{1}{b - a + 1}`],
+	['und', `P(X = x) = \\frac{1}{b - a + 1}`],
 	
-	['geo', `P(X = k) = (1 - p) \\cdot p^{k}`],
+	['geo', `P(X = x) = (1 - p) \\cdot p^{x}`],
 	
-	['bin', `P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1 - p)^{n-k}`],
+	['bin', `P(X = x) = \\binom{n}{x} \\cdot p^x \\cdot (1 - p)^{n-x}`],
 	
-	['poi', `P(X = k) = e^{-\\lambda}\\cdot\\dfrac{\\lambda^k}{k!}`],
+	['poi', `P(X = x) = e^{-\\lambda}\\cdot\\dfrac{\\lambda^x}{x!}`],
 	
 	['unc', `p(x) = 
 		\\begin{cases}
@@ -495,13 +495,13 @@ const proFunc = new Map([
 ]);
 
 const cumFunc = new Map([
-	['und', `P(X \\leq k) = \\frac{k - a + 1}{b - a + 1}`],
+	['und', `P(X \\leq x) = \\frac{x - a + 1}{b - a + 1}`],
 	
-	['geo', `P(X \\leq k) = 1 - p^{k+1}`],
+	['geo', `P(X \\leq x) = 1 - p^{x+1}`],
 	
-	['bin', `P(X \\leq k) = \\sum_{r = 0}^{r=k} \\binom{n}{r} \\cdot p^r \\cdot (1 - p)^{n-r}`],
+	['bin', `P(X \\leq x) = \\sum_{r = 0}^{r=x} \\binom{n}{r} \\cdot p^r \\cdot (1 - p)^{n-r}`],
 	
-	['poi', `P(X \\leq k) = \\sum_{r = 0}^{r=k}  e^{-\\lambda}\\cdot\\dfrac{\\lambda^r}{r!}`],
+	['poi', `P(X \\leq x) = \\sum_{r = 0}^{r=x}  e^{-\\lambda}\\cdot\\dfrac{\\lambda^r}{r!}`],
 	
 	['unc', `P(X \\leq x) = 
 		\\begin{cases}
