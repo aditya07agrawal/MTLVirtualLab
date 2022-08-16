@@ -110,14 +110,20 @@ function validate(choice){
 		throw ("Please enter only non-negative numbers as parameters.");
 	}
 
+	p1 = parseFloat(p1);
+	p2 = parseFloat(p2);
+
 	if((choice == 'geo' || choice == 'bin') && (p1 > 1)){
 		throw ("Success probability must be below 1.");
 	}
 
-	console.log("Successful validation!");
+	if(int_para1.includes(choice) && !(Number.isInteger(p1))){
+		throw ("The first parameter must be an integer");
+	}
 
-	p1 = parseFloat(p1);
-	p2 = parseFloat(p2);
+	if(int_para2.includes(choice) && !(Number.isInteger(p2))){
+		throw ("The second parameter must be an integer");
+	}
 
 	return [p1, p2];
 }

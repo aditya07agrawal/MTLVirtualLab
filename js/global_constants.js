@@ -59,6 +59,9 @@ const TRIALS = 10000;							//Number of trials of an experiment
 const disc = ['und', 'geo', 'bin', 'poi'];										//Discrete distributions
 const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Continuous distributions
 
+const int_para1 = ['und', 'erl', 'chi', 'stu'];
+const int_para2 = ['und', 'bin'];
+
 const parameter1 = new Map([
 	['und', 'a'],
 	['geo', 'p'],
@@ -68,7 +71,7 @@ const parameter1 = new Map([
 	['exp', '\\lambda'],
 	['nor', '\\mu'],
 	['gam', '\\alpha'],
-	['erl', '\\alpha'],
+	['erl', 'k'],
 	['bet', '\\alpha'],
 	['chi', '\\nu'],
 	['stu', '\\nu']
@@ -474,7 +477,7 @@ const proFunc = new Map([
 
 	['erl', `p(x) = 
 		\\begin{cases}
-			\\dfrac{x^{\\alpha-1}e^{-\\beta x}\\beta^\\alpha}{\\Gamma(\\alpha)} & x \\geq 0 \\\\
+			\\dfrac{x^{k-1}e^{-\\beta x}\\beta^k}{\\Gamma(k)} & x \\geq 0 \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 	
@@ -528,7 +531,7 @@ const cumFunc = new Map([
 	['erl', `P(X \\leq x) = 
 		\\begin{cases}
 			0 & x < 0 \\\\
-			\\displaystyle \\int_{0}^{x} \\dfrac{t^{\\alpha-1}e^{-\\beta t}\\beta^\\alpha}{\\Gamma(\\alpha)} dt & x \\geq 0
+			\\displaystyle \\int_{0}^{x} \\dfrac{t^{k-1}e^{-\\beta t}\\beta^k}{\\Gamma(k)} dt & x \\geq 0
 		\\end{cases}`],
 	
 	['bet', `P(X \\leq x) = 
