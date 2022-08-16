@@ -106,22 +106,30 @@ function validate(choice){
 		throw ("Please enter the required parameters.");
 	}
 
-	if(isNaN(p1) || isNaN(p2) || p1 < 0 || p2 < 0){
-		throw ("Please enter only non-negative numbers as parameters.");
+	if(isNaN(p1) || isNaN(p2)){
+		throw ("Please enter only numbers as parameters.");
 	}
 
 	p1 = parseFloat(p1);
 	p2 = parseFloat(p2);
 
+	if((p1 < 0) && !neg_para.includes(choice+'_p1')){
+		throw ("The first parameter must be non-negative.");
+	}
+
+	if((p2 < 0) && !neg_para.includes(choice+'_p2')){
+		throw ("The second parameter must be non-negative.");
+	}
+
 	if((choice == 'geo' || choice == 'bin') && (p1 > 1)){
 		throw ("Success probability must be below 1.");
 	}
 
-	if(int_para1.includes(choice) && !(Number.isInteger(p1))){
+	if(int_para.includes(choice+'_p1') && !(Number.isInteger(p1))){
 		throw ("The first parameter must be an integer");
 	}
 
-	if(int_para2.includes(choice) && !(Number.isInteger(p2))){
+	if(int_para.includes(choice+'p2') && !(Number.isInteger(p2))){
 		throw ("The second parameter must be an integer");
 	}
 

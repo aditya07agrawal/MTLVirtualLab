@@ -59,8 +59,8 @@ const TRIALS = 10000;							//Number of trials of an experiment
 const disc = ['und', 'geo', 'bin', 'poi'];										//Discrete distributions
 const cont = ['unc', 'exp', 'gam', 'bet', 'chi', 'nor', 'erl', 'stu'];			//Continuous distributions
 
-const int_para1 = ['und', 'erl', 'chi', 'stu'];
-const int_para2 = ['und', 'bin'];
+const int_para = ['und_p1', 'erl_p1', 'chi_p1', 'stu_p1', 'und_p2', 'bin_p2'];
+const neg_para = ['und_p1', 'unc_p1', 'nor_p1', 'und_p2', 'unc_p2'];
 
 const parameter1 = new Map([
 	['und', 'a'],
