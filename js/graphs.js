@@ -129,7 +129,7 @@ function validate(choice){
 		throw ("The first parameter must be an integer");
 	}
 
-	if(int_para.includes(choice+'p2') && !(Number.isInteger(p2))){
+	if(int_para.includes(choice+'_p2') && !(Number.isInteger(p2))){
 		throw ("The second parameter must be an integer");
 	}
 
