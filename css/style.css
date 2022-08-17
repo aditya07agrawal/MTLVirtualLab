@@ -94,6 +94,7 @@ span#func {
 
 .jxgbox:empty {
   background-color: transparent;
+  display: none;
   border: none;
 }
 
