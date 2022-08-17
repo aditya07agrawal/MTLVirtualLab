@@ -141,17 +141,17 @@ function validate3(){
 
 	if(p3 == ''){
 		throw ("Please enter the required parameters.");
-		return;
 	}
 
 	if(isNaN(p3) || p3 < 0){
 		throw ("Please enter only non-negative numbers as parameters.");
-		return;
 	}
 
-	console.log("Successful validation!");
-
 	p3 = parseInt(p3);
+
+	if(!Number.isInteger(p2)){
+		throw ('Please enter an integer as the number of random variables')
+	}
 
 	return p3;
 }
