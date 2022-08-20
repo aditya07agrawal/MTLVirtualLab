@@ -293,6 +293,9 @@ function change(){
 		func.innerHTML = "\\[ " + cumFunc.get(choice) + " \\]";
 		MathJax.typeset([func]);
 	}
+
+	document.getElementById('x').value = "";
+	document.getElementById('pr').value = "";
 }
 
 function outputMoments(choice, p1=0, p2=0){
