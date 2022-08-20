@@ -149,7 +149,7 @@ function validate3(){
 
 	p3 = parseInt(p3);
 
-	if(!Number.isInteger(p2)){
+	if(!Number.isInteger(p3)){
 		throw ('Please enter an integer as the number of random variables')
 	}
 
