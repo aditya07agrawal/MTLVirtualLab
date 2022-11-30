@@ -458,46 +458,46 @@ const proFunc = new Map([
 	
 	['poi', `P(X = x) = e^{-\\lambda}\\cdot\\dfrac{\\lambda^x}{x!}`],
 	
-	['unc', `p(x) = 
+	['unc', `f(x) = 
 		\\begin{cases}
 			\\dfrac{1}{b - a} & x \\in [a, b] \\\\ 
 			0 & \\text{otherwise}
 		\\end{cases}`],
 	
-	['exp', `p(x) = 
+	['exp', `f(x) = 
 		\\begin{cases}
 			\\lambda e^{-\\lambda x} & x \\geq 0 \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 	
-	['nor', `p(x) = 
+	['nor', `f(x) = 
 		\\dfrac{1}{\\sigma\\sqrt{2\\pi}}\\cdot e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}`],
 	
-	['gam', `p(x) = 
+	['gam', `f(x) = 
 		\\begin{cases}
 			\\dfrac{x^{\\alpha-1}e^{-\\beta x}\\beta^\\alpha}{\\Gamma(\\alpha)} & x \\geq 0 \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 
-	['erl', `p(x) = 
+	['erl', `f(x) = 
 		\\begin{cases}
 			\\dfrac{x^{k-1}e^{-\\beta x}\\beta^k}{\\Gamma(k)} & x \\geq 0 \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 	
-	['bet', `p(x) = 
+	['bet', `f(x) = 
 		\\begin{cases}
 			\\dfrac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha, \\beta)} & x \\in [0, 1] \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 
-	['chi', `p(x) = 
+	['chi', `f(x) = 
 		\\begin{cases}
 			\\dfrac{x^{k/2 - 1}e^{-x/2}}{2^{k/2}\\cdot\\Gamma(k/2)} & x \\geq 0 \\\\
 			0 & \\text{otherwise}
 		\\end{cases}`],
 
-	['stu', `p(x) = 
+	['stu', `f(x) = 
 		\\dfrac{\\Gamma\\left(\\frac{\\nu+1}{2}\\right)}{\\sqrt{\\nu\\pi}\\ \\Gamma(\\frac{\\nu}{2})}\\left(1 + \\dfrac{x^2}{\\nu}\\right)^{-(v+1)/2}`]
 ]);
 

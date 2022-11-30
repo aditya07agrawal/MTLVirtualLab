@@ -272,7 +272,7 @@ function change(){
 
 	if(document.head.id == "std"){
 		const prl = document.getElementById('prl');
-		prl.innerHTML = (disc.includes(choice)? '\\(P(X = x) = \\)': '\\(p(x) = \\)');
+		prl.innerHTML = (disc.includes(choice)? '\\(P(X = x) = \\)': '\\(f(x) = \\)');
 		MathJax.typeset([prl]);
 	}
 
