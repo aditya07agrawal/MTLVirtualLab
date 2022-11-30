@@ -502,9 +502,18 @@ const proFunc = new Map([
 ]);
 
 const cumFunc = new Map([
-	['und', `P(X \\leq x) = \\frac{x - a + 1}{b - a + 1}`],
+	['und', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < a \\\\
+			\\frac{\\lfloor x \\rfloor - a + 1}{b - a + 1} & a \\leq x < b \\\\
+			1 & b \\leq x
+		\\end{cases}`],
 	
-	['geo', `P(X \\leq x) = 1 - p^{x+1}`],
+	['geo', `P(X \\leq x) = 
+		\\begin{cases}
+			0 & x < 0 \\\\
+			1 - p^{\\lfloor x \\rfloor +1} & x \\geq 0
+		\\end{cases}`],
 	
 	['bin', `P(X \\leq x) = \\sum_{r = 0}^{r=x} \\binom{n}{r} \\cdot p^r \\cdot (1 - p)^{n-r}`],
 	
