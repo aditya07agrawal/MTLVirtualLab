@@ -133,6 +133,14 @@ function validate(choice){
 		throw ("The second parameter must be an integer");
 	}
 
+	if((choice == 'unc') && (p1 > p2)){
+		throw ("The first parameter must be smaller than or equal to the second parameter")
+	}
+
+	if((choice == 'und') && (p1 >= p2)){
+		throw ("The first parameter must be smaller than the second parameter")
+	}
+
 	return [p1, p2];
 }
 
