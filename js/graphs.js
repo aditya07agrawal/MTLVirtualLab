@@ -333,7 +333,9 @@ function outputProbability(){
 			throw ("Please enter a number.");
 		}
 
-		document.getElementById('pr').value = (x == ""? "": Dist.get(choice)(parseFloat(x), p1, p2));
+		// document.getElementById('pr').value = (x == ""? "": parseFloat(Dist.get(choice)(parseFloat(x), p1, p2).toFixed(6)));
+		// document.getElementById('pr').value = (x == ""? "": Dist.get(choice)(parseFloat(x), p1, p2).toExponential(3));
+		document.getElementById('pr').value = (x == ""? "": Dist.get(choice)(parseFloat(x), p1, p2).toFixed(6));
 	}catch(e){
 		alert(e);
 	}
@@ -350,7 +352,7 @@ function outputCumulativeProbability(){
 			throw ("Please enter a number.");
 		}
 
-		document.getElementById('pr').value = (x == ""? "": cDist.get(choice)(parseFloat(x), p1, p2));
+		document.getElementById('pr').value = (x == ""? "": cDist.get(choice)(parseFloat(x), p1, p2).toFixed(6));
 	}catch(e){
 		alert(e);
 	}
