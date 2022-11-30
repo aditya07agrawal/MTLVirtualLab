@@ -452,11 +452,23 @@ const proFunc = new Map([
 			0 & \\text{otherwise}
 		\\end{cases}`],
 	
-	['geo', `P(X = x) = (1 - p) \\cdot p^{x}`],
+	['geo', `P(X = x) = 
+		\\begin{cases}
+			(1 - p) \\cdot p^{x} & x \\in \\mathbb{Z}^* \\\\
+			0 & \\text{otherwise}
+		\\end{cases}`],
 	
-	['bin', `P(X = x) = \\binom{n}{x} \\cdot p^x \\cdot (1 - p)^{n-x}`],
+	['bin', `P(X = x) =
+		\\begin{cases}
+			\\binom{n}{x} \\cdot p^x \\cdot (1 - p)^{n-x} & x = 0, 1, 2, \\ldots, n \\\\[3pt]
+			0 & \\text{otherwise}
+		\\end{cases}`],
 	
-	['poi', `P(X = x) = e^{-\\lambda}\\cdot\\dfrac{\\lambda^x}{x!}`],
+	['poi', `P(X = x) =
+		\\begin{cases}
+			e^{-\\lambda}\\cdot\\dfrac{\\lambda^x}{x!} & x \\in \\mathbb{Z}^* \\\\[3pt]
+			0 & \\text{otherwise}
+		\\end{cases}`],
 	
 	['unc', `f(x) = 
 		\\begin{cases}
