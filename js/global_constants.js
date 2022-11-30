@@ -446,7 +446,11 @@ const Rand = new Map([
 ]);
 
 const proFunc = new Map([
-	['und', `P(X = x) = \\frac{1}{b - a + 1}`],
+	['und', `P(X = x) = 
+		\\begin{cases}
+			\\frac{1}{b - a + 1} & x \\in \\mathbb{Z} \\cap [a, b] \\\\[3pt]
+			0 & \\text{otherwise}
+		\\end{cases}`],
 	
 	['geo', `P(X = x) = (1 - p) \\cdot p^{x}`],
 	
