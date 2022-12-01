@@ -64,6 +64,16 @@
 				<td><label for="pr" id="prl"></label></td>
 				<td class="input"><input disabled type="text" id="pr"></td>
 			</tr>
+			<tr>
+				<td colspan=3>
+					\( P \Big( \)
+					<input type="text" id="minx" oninput="outputRangeProbability()"> 
+					\( &lt X \leq \)
+					<input type="text" id="maxx" oninput="outputRangeProbability()">
+					\( \Big) = \)
+				</td>
+				<td class="input"> <input disabled type="text" id="rpr"></td>
+			</tr>
 		</table><br>
 
 		<input class="hidden" type="checkbox" id="theo" value="theo" checked>

@@ -304,6 +304,12 @@ function change(){
 
 	document.getElementById('x').value = "";
 	document.getElementById('pr').value = "";
+
+	if(document.head.id == "std"){
+		document.getElementById('minx').value = "";
+		document.getElementById('maxx').value = "";
+		document.getElementById('rpr').value = "";
+	}
 }
 
 function outputMoments(choice, p1=0, p2=0){
@@ -333,8 +339,6 @@ function outputProbability(){
 			throw ("Please enter a number.");
 		}
 
-		// document.getElementById('pr').value = (x == ""? "": parseFloat(Dist.get(choice)(parseFloat(x), p1, p2).toFixed(6)));
-		// document.getElementById('pr').value = (x == ""? "": Dist.get(choice)(parseFloat(x), p1, p2).toExponential(3));
 		document.getElementById('pr').value = (x == ""? "": Dist.get(choice)(parseFloat(x), p1, p2).toFixed(6));
 	}catch(e){
 		alert(e);
@@ -353,6 +357,37 @@ function outputCumulativeProbability(){
 		}
 
 		document.getElementById('pr').value = (x == ""? "": cDist.get(choice)(parseFloat(x), p1, p2).toFixed(6));
+	}catch(e){
+		alert(e);
+	}
+}
+
+function outputRangeProbability(){
+	const choice = select.options[select.selectedIndex].value;
+
+	try{
+		const [p1, p2] = validate(choice);
+		let minx = document.getElementById('minx').value;
+		let maxx = document.getElementById('maxx').value;
+
+		if(isNaN(minx) || isNaN(maxx)){
+			throw ("Please enter a number.");
+		}
+
+		if(minx == "" && maxx == ""){
+			document.getElementById('rpr').value = "";
+		}
+		else{
+			let start = 0, end = 1;
+			if(minx != ""){
+				start = cDist.get(choice)(parseFloat(minx), p1, p2);
+			}
+			if(maxx != ""){
+				end = cDist.get(choice)(parseFloat(maxx), p1, p2);
+			}
+
+			document.getElementById('rpr').value = (end - start).toFixed(6);
+		}
 	}catch(e){
 		alert(e);
 	}
