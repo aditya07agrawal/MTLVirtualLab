@@ -9,6 +9,7 @@ body {
   margin: auto;
 }
 
+/* INPUT ELEMENTS */
 input {
   border: 1px solid rgb(150, 150, 150);
   border-radius: 2px;
@@ -40,21 +41,22 @@ select {
   float: right;
 }
 
+/* HIDDING */
 .hidden {
   visibility: hidden;
 }
 
+/* TABLE */
 table {
   text-align: right;
-  margin: auto auto auto 12.5%;
+  margin: auto auto auto 19%;
   table-layout: fixed;
-  width: 60%;
+  width: 56%;
   /* border: solid black 1px; */
 }
 
 td.input {
   text-align: left;
-  /* border: solid black 1px; */
 }
 
 col.input {
