@@ -9,7 +9,10 @@ var board = null;
 
 //Graphstyling
 const layout = {
-	xaxis: {title: "x"},
+	xaxis: {
+		title: "x",
+		zeroline: false
+	},
 	yaxis: {
 		showline: true,
 		rangemode: 'nonnegative'
