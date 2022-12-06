@@ -1,0 +1,34 @@
+body{
+	width: 960px;
+	margin: auto;
+	justify-content: center;
+	text-align: center;
+}
+
+h2 {
+	text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+	padding: 8px;
+	text-align: center;
+	background-color: rgb(235, 235, 235);
+	border: solid 1px rgb(200, 200, 200);
+	border-radius: 3px;
+	position: relative;
+	margin: 0px 0px 10px 0px;
+	box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+}
+
+input {
+	border: 1px solid rgb(150, 150, 150);
+	border-radius: 0.2cm;
+	padding: 6px;
+	background-color: rgb(240, 240, 240);
+	margin: auto;
+	margin-top: 10px;
+	width: 12cm;
+	height: 1.5cm;
+	align-self: center;
+}
+
+input[type="button"]:hover {
+	background-color: rgb(210, 210, 210);
+}
