@@ -100,6 +100,15 @@ span#func {
 	border: none;
 }
 
+.mathjaxMoments {
+	font-size: 90%;
+	font-family: sans-serif;
+	margin: auto;
+	text-align: center;
+	color: rgb(120, 120, 120);
+	padding: 15px;
+}
+
 /**/
 p.mathjaxText {
 	font-size: 100%;
@@ -118,15 +127,6 @@ p.small {
 	margin-top: 5px;
 	margin-right: 5px;
 	margin-bottom: 5px;
-}
-
-.mathjaxMoments {
-	font-size: 90%;
-	font-family: sans-serif;
-	margin: auto;
-	text-align: center;
-	color: rgb(120, 120, 120);
-	padding: 15px;
 }
 
 p.mathjaxCenter {
